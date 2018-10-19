@@ -15,10 +15,14 @@ class FontVm
     /** @var int  */
     protected $size;
 
-    public function __construct(string $name, string $author, int $size) {
+    /** @var int  */
+    protected $id;
+
+    public function __construct(string $name, string $author, $size, $id = null) {
         $this->name = $name;
         $this->author = $author;
         $this->size = $size;
+        $this->id = $id;
     }
 
     public function getName()
@@ -51,8 +55,18 @@ class FontVm
         $this->size = $size;
     }
 
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
     public static function createFromModel(Font $font): FontVm
     {
-        return new FontVm($font->getName(), $font->getAuthor(), $font->getSize());
+        return new FontVm($font->getName(), $font->getAuthor(), $font->getSize(), $font->getId());
     }
 }

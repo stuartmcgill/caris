@@ -6,6 +6,7 @@
                     <th>Font</th>
                     <th>Author</th>
                     <th>Size</th>
+                    <th>Action</th>
                 </thead>
                 <tbody>
                     {% for font in fonts %}
@@ -13,6 +14,7 @@
                             <td>{{ font.getName }}</td>
                             <td>{{ font.getAuthor }}</td>
                             <td>{{ font.getSize }}</td>
+                            <td><a href="{{ path("edit_item", {'id': font.getId}) }}">Edit...</a></td>
                         </tr>
                     {% endfor %}
                 </tbody>

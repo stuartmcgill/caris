@@ -32,10 +32,11 @@ class Font
      */
     private $size;
 
-    public function __construct(FontVm $fontVm) {
-        $this->name = $fontVm->getName();
-        $this->author = $fontVm->getAuthor();
-        $this->size = $fontVm->getSize();
+    public function __construct(FontVm $fontVm = null) {
+        $this->name = $fontVm ? $fontVm->getName() : '';
+        $this->author = $fontVm ? $fontVm->getAuthor() : '';
+        $this->size = $fontVm ? $fontVm->getSize() : 0;
+        $this->id = $fontVm ? $fontVm->getId() : null;
     }
 
     public function getId(): ?int
@@ -77,5 +78,12 @@ class Font
         $this->size = $size;
 
         return $this;
+    }
+
+    public function update(FontVm $fontVm)
+    {
+        $this->name = $fontVm->getName();
+        $this->author = $fontVm->getAuthor();
+        $this->size = $fontVm->getSize();
     }
 }

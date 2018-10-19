@@ -3,16 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Font;
-//use App\ViewModels\TaskVm;
 use App\ViewModels\FontVm;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Annotation\Route; //keep this
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\HttpFoundation\Response;
 
 
 class Caris extends AbstractController
@@ -26,7 +23,7 @@ class Caris extends AbstractController
 
         $fontVms = [];
         foreach ($fonts as $font) {
-            $fontVms[] = new FontVm($font->getName(), $font->getAuthor(), $font->getSize());
+            $fontVms[] = new FontVm($font->getName(), $font->getAuthor(), $font->getSize(), $font->getId());
         }
 
         return $this->render(
@@ -38,16 +35,12 @@ class Caris extends AbstractController
     }
 
     /**
-     * @Route("/caris/edit", name="edit_item")
+     * @Route("/caris/edit/{id}", name="edit_item")
      */
     public function editItem(Request $request, int $id)
     {
-        return $this->render(
-            'form.html.twig',
-            [
-                'id' => $id
-            ]
-        );
+        $font = $this->getDoctrine()->getManager()->getRepository(Font::class)->find($id);
+        return $this->saveItem($request, $font);
     }
 
     /**
@@ -55,30 +48,40 @@ class Caris extends AbstractController
      */
     public function newItem(Request $request)
     {
+        return $this->saveItem($request, new Font());
         // creates a font and gives it some dummy data for this example
-        $viewModel = new FontVm('','', 0);
+        $viewModel = new FontVm('','', null);
+    }
+
+    private function saveItem(Request $request, Font $font)
+    {
+        $new = empty($font->getId());
+
+        $viewModel = new FontVm($font->getName(), $font->getAuthor(), $font->getSize(), $font->getId());
 
         $form = $this->createFormBuilder($viewModel)
             ->add('name', TextType::class)
             ->add('author', TextType::class)
             ->add('size', IntegerType::class)
-            ->add('save', SubmitType::class, array('label' => 'Create font'))
+            ->add('save', SubmitType::class, array('label' => 'Save font'))
             ->getForm();
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             // $form->getData() holds the submitted values
-            // but, the original `$task` variable has also been updated
+            // but, the original `$font` variable has also been updated
             $fontVm = $form->getData();
 
-            // ... perform some action, such as saving the font to the database
-            // for example, if Font is a Doctrine entity, save it!
-//            $task = new Task($taskVm, $this->getUser()->getUserName());
-            $task = new Font($fontVm);
-
             $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($task);
+
+            if ($new) {
+                $font = new Font($fontVm);
+                $entityManager->persist($font);
+            } else {
+                $font->update($fontVm);
+            }
+
             $entityManager->flush();
 
             return $this->redirectToRoute('display_success');
