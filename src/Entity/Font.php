@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\ViewModels\FontVm;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -30,6 +31,12 @@ class Font
      * @ORM\Column(type="integer")
      */
     private $size;
+
+    public function __construct(FontVm $fontVm) {
+        $this->name = $fontVm->getName();
+        $this->author = $fontVm->getAuthor();
+        $this->size = $fontVm->getSize();
+    }
 
     public function getId(): ?int
     {

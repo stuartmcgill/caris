@@ -1,0 +1,21 @@
+{%  extends 'base.html.twig' %}
+{%  block body %}
+    <div class="row">
+            <table class="table">
+                <thead>
+                    <th>Font</th>
+                    <th>Author</th>
+                    <th>Size</th>
+                </thead>
+                <tbody>
+                    {% for font in fonts %}
+                        <tr>
+                            <td>{{ font.getName }}</td>
+                            <td>{{ font.getAuthor }}</td>
+                            <td>{{ font.getSize }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+    </div>
+{%  endblock %}
